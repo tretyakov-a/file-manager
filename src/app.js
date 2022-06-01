@@ -2,12 +2,16 @@ import readline from 'readline';
 import os from 'os';
 import EventEmmiter from 'events';
 import parseArguments from './arguments-parse.js';
+import { colorize, yellow, redBright } from './appearance.js';
+
+const greet = colorize(yellow);
+const error = colorize(redBright);
 
 const LINE_START = '> ';
 const MESSAGES = {
-  WELCOME: (username) => `Welcome to the File Manager, ${username}!\n`,
-  FAREWELL: (username = 'unknown') => `\nThank you for using File Manager, ${username}!\n`,
-  DIRECTORY: (dir) => `You are currently in ${dir}\n${LINE_START}`,
+  WELCOME: (username) => greet(`*** Welcome to the File Manager, ${username}! ***\n`),
+  FAREWELL: (username = 'unknown') => greet(`\nThank you for using File Manager, ${username}!\n`),
+  DIRECTORY: (dir) => `You are currently in ${dir}`,
 };
 
 export default class App extends EventEmmiter {
@@ -32,6 +36,11 @@ export default class App extends EventEmmiter {
     }
   }
 
+  _writePromt = (message = '') => {
+    const dirMessage = MESSAGES.DIRECTORY(this.workingDirectory);
+    process.stdout.write(`${message}\n${dirMessage}\n${LINE_START}`);
+  }
+
   _initEvents() {
     this.on(App.EVENTS.START, this.onStart);
     this.on(App.EVENTS.CLOSE, this.onClose);
@@ -41,7 +50,7 @@ export default class App extends EventEmmiter {
 
   onStart = () => {
     process.stdout.write(MESSAGES.WELCOME(this.userName));
-    process.stdout.write(MESSAGES.DIRECTORY(this.workingDirectory));
+    this._writePromt();
   }
 
   onClose = () => {
@@ -50,12 +59,17 @@ export default class App extends EventEmmiter {
     process.exitCode = 0;
   }
 
-  onCommand = () => {
-    process.stdout.write(`Command was typed: ${command}\n${LINE_START}`);
+  onCommand = (line) => {
+    const [ command, ...args ] = line.split(' ').map((v) => v.trim());
+    if (command === 'exit') {
+      return this.emit(App.EVENTS.CLOSE);
+    }
+    
+    this._writePromt(`command: ${command}, args:  ${args || '[no-args]'}`);
   }
 
   onError = (err) => {
-    console.error(err.message);
+    console.error(error(err.message));
     this.emit(App.EVENTS.CLOSE);
   }
 
@@ -64,16 +78,13 @@ export default class App extends EventEmmiter {
       input: process.stdin,
       output: process.stdout,
     });
-    
-    this.readline.on('line', (line) => {
-      if (line.trim() === 'exit') {
-        return this.emit(App.EVENTS.CLOSE);
-      }
-      this.emit(App.EVENTS.COMMAND, line)
-    });
-    
+    this.readline.on('line', (line) => this.emit(App.EVENTS.COMMAND, line.trim()));
     this.readline.on('SIGINT', () => this.emit(App.EVENTS.CLOSE));
   }
+
+  handleUp = () => {
+
+  };
 }
 
 App.EVENTS = {
