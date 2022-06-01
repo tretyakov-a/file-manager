@@ -1,2 +1,3 @@
+import App from './app.js';
 
-console.log('Welcome to the File Manager, Username!')
+const app = new App(process.argv.slice(2));
