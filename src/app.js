@@ -1,16 +1,24 @@
+import path from 'path';
 import readline from 'readline';
 import os from 'os';
 import EventEmmiter from 'events';
+import { InvalidInput, OperationFailed, InvalidArgument } from './errors.js';
 import parseArguments from './arguments-parse.js';
-import { colorize, yellow, redBright } from './appearance.js';
+import { colorize, colors } from './appearance.js';
+import { list, cd } from './commands/fs/index.js';
 
-const greet = colorize(yellow);
-const error = colorize(redBright);
+const msg = {
+  greet: colorize(colors.yellow),
+  error: colorize(colors.redBright),
+  service: colorize(colors.greenBright),
+  dir: colorize(colors.blueBright),
+  file: colorize(colors.white),
+}
 
 const LINE_START = '> ';
 const MESSAGES = {
-  WELCOME: (username) => greet(`*** Welcome to the File Manager, ${username}! ***\n`),
-  FAREWELL: (username = 'unknown') => greet(`\nThank you for using File Manager, ${username}!\n`),
+  WELCOME: (username) => msg.greet(`*** Welcome to the File Manager, ${username}! ***\n`),
+  FAREWELL: (username = 'unknown') => msg.greet(`\nThank you for using File Manager, ${username}!\n`),
   DIRECTORY: (dir) => `You are currently in ${dir}`,
 };
 
@@ -36,9 +44,10 @@ export default class App extends EventEmmiter {
     }
   }
 
-  _writePromt = (message = '') => {
+  _writePromt = (message) => {
     const dirMessage = MESSAGES.DIRECTORY(this.workingDirectory);
-    process.stdout.write(`${message}\n${dirMessage}\n${LINE_START}`);
+    const outputMessage = !message ? '' : `${message}\n`;
+    process.stdout.write(`${outputMessage}${msg.service(dirMessage)}\n${msg.service(LINE_START)}`);
   }
 
   _initEvents() {
@@ -56,23 +65,28 @@ export default class App extends EventEmmiter {
   onClose = () => {
     process.stdout.write(MESSAGES.FAREWELL(this.userName));
     this.readline.close();
-    process.exitCode = 0;
+    process.exitCode = 1;
   }
 
-  onCommand = (line) => {
+  onCommand = async (line) => {
     const [ command, ...args ] = line.split(' ').map((v) => v.trim());
-    if (command === 'exit') {
-      return this.emit(App.EVENTS.CLOSE);
-    }
-    
-    this._writePromt(`command: ${command}, args:  ${args || '[no-args]'}`);
+    const message = (await this._processCommand(command, args)) || '';
+    this._writePromt(message);
   }
 
   onError = (err) => {
-    console.error(error(err.message));
-    this.emit(App.EVENTS.CLOSE);
+    const isLocalError = err instanceof OperationFailed || err instanceof InvalidInput || err instanceof InvalidArgument;
+    const isCrushError = err instanceof InvalidArgument;
+    if (isLocalError) {
+      this._writePromt(msg.error(err.message));
+    } else {
+      console.error(err);
+    }
+    if (!isLocalError || isCrushError) {
+      this.emit(App.EVENTS.CLOSE);
+    }
   }
-
+  
   _initReadline() {
     this.readline = readline.createInterface({
       input: process.stdin,
@@ -82,8 +96,38 @@ export default class App extends EventEmmiter {
     this.readline.on('SIGINT', () => this.emit(App.EVENTS.CLOSE));
   }
 
-  handleUp = () => {
+  async _processCommand(command, args) {
+    try {
+      switch(command) {
+        case 'exit': return this.emit(App.EVENTS.CLOSE);
+        case 'up': return this.handleUp();
+        case 'cd': return await this.handleCd(args);
+        case 'ls': return await this.handleLs();
+      }
+    } catch (err) {
+      this.emit(App.EVENTS.ERROR, err);
+    }
+  }
 
+  handleUp = () => {
+    const { dir } = path.parse(this.workingDirectory);
+    this.workingDirectory = dir;
+    return msg.service(`Working directory changed to ${this.workingDirectory}`);
+  };
+
+  handleCd = async (args) => {
+    const [ pathToDir ] = args;
+    const source = path.resolve(this.workingDirectory, pathToDir);
+    await cd(source);
+    this.workingDirectory = source;
+    return msg.service(`Working directory changed to ${this.workingDirectory}`);
+  };
+
+  handleLs = async () => {
+    const filesList = (await list(this.workingDirectory))
+      .map((file) => `  ${file.isFile() ? msg.file(file.name) : msg.dir(file.name)}`);
+    const currentDir = msg.dir(`${this.workingDirectory}/`);
+    return `${currentDir}\n${filesList.join('\n')}`;
   };
 }
 
