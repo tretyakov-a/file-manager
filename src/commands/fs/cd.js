@@ -1,4 +1,4 @@
-import { OperationFailed } from '../../errors.js';
+import { OperationFailedError } from '../../errors.js';
 import fsPromises from 'fs/promises';
 import fs from 'fs';
 
@@ -8,7 +8,7 @@ const cd = async (source) => {
     return true;
   } catch (err) {
     if (err.code === 'ENOENT') {
-      throw new OperationFailed(`cd ${source}`);
+      throw new OperationFailedError(`cd ${source}`);
     }
     console.error(err);
   }

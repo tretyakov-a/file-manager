@@ -1,5 +1,5 @@
 
-class OperationFailed extends Error {
+class OperationFailedError extends Error {
   constructor(operation) {
     super(`Operation failed ${operation}`);
     this.operation = operation;
@@ -7,7 +7,7 @@ class OperationFailed extends Error {
   }
 }
 
-class InvalidInput extends Error {
+class InvalidInputError extends Error {
   constructor(input) {
     super(`Invalid input '${input}'`);
     this.input = input;
@@ -15,7 +15,7 @@ class InvalidInput extends Error {
   }
 }
 
-class InvalidArgument extends Error {
+class InvalidArgumentError extends Error {
   constructor(arg, config) {
     super(`Incorrect command '${arg}': supported commands list: ${config}`);
     this.arg = arg;
@@ -23,8 +23,19 @@ class InvalidArgument extends Error {
   }
 }
 
+const errors = {
+  OperationFailedError,
+  InvalidInputError,
+  InvalidArgumentError,
+};
+
+const isCustomError = (errorName) => {
+  return Object.keys(errors).find((name) => name === errorName);
+}
+
 export {
-  OperationFailed,
-  InvalidInput,
-  InvalidArgument,
+  OperationFailedError,
+  InvalidInputError,
+  InvalidArgumentError,
+  isCustomError,
 };

@@ -2,7 +2,12 @@ import path from 'path';
 import readline from 'readline';
 import os from 'os';
 import EventEmmiter from 'events';
-import { InvalidInput, OperationFailed, InvalidArgument } from './errors.js';
+import {
+  InvalidInputError,
+  OperationFailedError,
+  InvalidArgumentError,
+  isCustomError,
+} from './errors.js';
 import parseArguments from './arguments-parse.js';
 import { colorize, colors } from './appearance.js';
 import { list, cd } from './commands/fs/index.js';
@@ -70,19 +75,22 @@ export default class App extends EventEmmiter {
 
   onCommand = async (line) => {
     const [ command, ...args ] = line.split(' ').map((v) => v.trim());
-    const message = (await this._processCommand(command, args)) || '';
-    this._writePromt(message);
+    try {
+      const message = (await this._processCommand(command, args)) || '';
+      this._writePromt(message);
+    } catch (err) {
+      this.emit(App.EVENTS.ERROR, err);
+    }
   }
 
   onError = (err) => {
-    const isLocalError = err instanceof OperationFailed || err instanceof InvalidInput || err instanceof InvalidArgument;
-    const isCrushError = err instanceof InvalidArgument;
-    if (isLocalError) {
+    const isErrorCustom = isCustomError(err.name);
+    if (isErrorCustom) {
       this._writePromt(msg.error(err.message));
     } else {
       console.error(err);
     }
-    if (!isLocalError || isCrushError) {
+    if (!isErrorCustom || err instanceof InvalidArgumentError) {
       this.emit(App.EVENTS.CLOSE);
     }
   }
@@ -97,15 +105,12 @@ export default class App extends EventEmmiter {
   }
 
   async _processCommand(command, args) {
-    try {
-      switch(command) {
-        case 'exit': return this.emit(App.EVENTS.CLOSE);
-        case 'up': return this.handleUp();
-        case 'cd': return await this.handleCd(args);
-        case 'ls': return await this.handleLs();
-      }
-    } catch (err) {
-      this.emit(App.EVENTS.ERROR, err);
+    switch(command) {
+      case 'exit': return this.emit(App.EVENTS.CLOSE);
+      case 'up': return this.handleUp();
+      case 'cd': return await this.handleCd(args);
+      case 'ls': return await this.handleLs();
+      default: throw new InvalidInputError(command);
     }
   }
 
