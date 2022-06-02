@@ -5,7 +5,8 @@ import EventEmmiter from 'events';
 import { InvalidInputError, InvalidArgumentError, isCustomError } from './errors.js';
 import parseArguments from './arguments-parse.js';
 import { colorize, colors } from './appearance.js';
-import { list, cd, cat, add, rename, copy, move, remove } from './commands/fs/index.js';
+import { cat, add, rename, copy, move, remove } from './commands/fs/index.js';
+import { list, cd } from './commands/nwd/index.js';
 
 const msg = {
   greet: colorize(colors.yellow),
