@@ -171,7 +171,7 @@ export default class App extends EventEmmiter {
   handleRn = async (args) => {
     const [ pathToFile, newFileName ] = this.checkArgs(args, 2);
     const source = path.resolve(this.workingDirectory, pathToFile);
-    const destination = path.resolve(this.workingDirectory, newFileName); 
+    const destination = path.resolve(path.parse(source).dir, newFileName); 
     await rename(source, destination);
     return msg.service(`File ${source} successfully renamed to ${destination}`);
   };
