@@ -7,6 +7,7 @@ import parseArguments from './arguments-parse.js';
 import { colorize, colors } from './appearance.js';
 import { cat, add, rename, copy, move, remove } from './commands/fs/index.js';
 import { list, cd } from './commands/nwd/index.js';
+import myOs from './commands/os.js';
 
 const msg = {
   greet: colorize(colors.yellow),
@@ -112,6 +113,7 @@ export default class App extends EventEmmiter {
       case 'cp': return await this.handleCp(args);
       case 'mv': return await this.handleMv(args);
       case 'rm': return await this.handleRm(args);
+      case 'os': return await this.handleOs(args);
       default: throw new InvalidInputError(command);
     }
   }
@@ -182,11 +184,17 @@ export default class App extends EventEmmiter {
   };
 
   handleRm = async (args) => {
-    const [ pathToFile ] = this.checkArgs(args, );
+    const [ pathToFile ] = this.checkArgs(args, 1);
     const source = path.resolve(this.workingDirectory, pathToFile); 
     await remove(source);
     return msg.service(`File ${source} successfully removed`);
   };
+
+  handleOs = async (args) => {
+    const [ key ] = this.checkArgs(args, 1);
+    const result = await myOs(key);
+    return result;
+  }
 }
 
 App.EVENTS = {
