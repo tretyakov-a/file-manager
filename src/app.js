@@ -8,6 +8,7 @@ import { colorize, colors } from './appearance.js';
 import { cat, add, rename, copy, move, remove } from './commands/fs/index.js';
 import { list, cd } from './commands/nwd/index.js';
 import myOs from './commands/os.js';
+import hash from './commands/hash.js';
 
 const msg = {
   greet: colorize(colors.yellow),
@@ -114,6 +115,7 @@ export default class App extends EventEmmiter {
       case 'mv': return await this.handleMv(args);
       case 'rm': return await this.handleRm(args);
       case 'os': return await this.handleOs(args);
+      case 'hash': return await this.handleHash(args);
       default: throw new InvalidInputError(command);
     }
   }
@@ -194,6 +196,12 @@ export default class App extends EventEmmiter {
     const [ key ] = this.checkArgs(args, 1);
     const result = await myOs(key);
     return result;
+  };
+
+  handleHash = async (args) => {
+    const [ pathToFile ] = this.checkArgs(args, 1);
+    const source = path.resolve(this.workingDirectory, pathToFile); 
+    return await hash(source);
   }
 }
 
