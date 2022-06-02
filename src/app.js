@@ -2,15 +2,10 @@ import path from 'path';
 import readline from 'readline';
 import os from 'os';
 import EventEmmiter from 'events';
-import {
-  InvalidInputError,
-  OperationFailedError,
-  InvalidArgumentError,
-  isCustomError,
-} from './errors.js';
+import { InvalidInputError, InvalidArgumentError, isCustomError } from './errors.js';
 import parseArguments from './arguments-parse.js';
 import { colorize, colors } from './appearance.js';
-import { list, cd } from './commands/fs/index.js';
+import { list, cd, cat, add, rename, copy, move, remove } from './commands/fs/index.js';
 
 const msg = {
   greet: colorize(colors.yellow),
@@ -41,7 +36,7 @@ export default class App extends EventEmmiter {
       });
       userInfo = os.userInfo();
       this.userName = argValues.userName || userInfo.username;
-      this.workingDirectory = userInfo.homedir;
+      this.workingDirectory = path.resolve(userInfo.homedir, 'tmp');
   
       this.emit(App.EVENTS.START);
     } catch (err) {
@@ -52,7 +47,7 @@ export default class App extends EventEmmiter {
   _writePromt = (message) => {
     const dirMessage = MESSAGES.DIRECTORY(this.workingDirectory);
     const outputMessage = !message ? '' : `${message}\n`;
-    process.stdout.write(`${outputMessage}${msg.service(dirMessage)}\n${msg.service(LINE_START)}`);
+    process.stdout.write(`${outputMessage}${msg.greet(dirMessage)}\n${msg.greet(LINE_START)}`);
   }
 
   _initEvents() {
@@ -110,9 +105,22 @@ export default class App extends EventEmmiter {
       case 'up': return this.handleUp();
       case 'cd': return await this.handleCd(args);
       case 'ls': return await this.handleLs();
+      case 'cat': return await this.handleCat(args);
+      case 'add': return await this.handleAdd(args);
+      case 'rn': return await this.handleRn(args);
+      case 'cp': return await this.handleCp(args);
+      case 'mv': return await this.handleMv(args);
+      case 'rm': return await this.handleRm(args);
       default: throw new InvalidInputError(command);
     }
   }
+
+  checkArgs = (args, requiredNumberOfArgs) => {
+    if (args.length < requiredNumberOfArgs) {
+      throw new InvalidInputError(`number of arguments should be ${requiredNumberOfArgs}`);
+    }
+    return args;
+  };
 
   handleUp = () => {
     const { dir } = path.parse(this.workingDirectory);
@@ -121,7 +129,7 @@ export default class App extends EventEmmiter {
   };
 
   handleCd = async (args) => {
-    const [ pathToDir ] = args;
+    const [ pathToDir ] = this.checkArgs(args, 1);
     const source = path.resolve(this.workingDirectory, pathToDir);
     await cd(source);
     this.workingDirectory = source;
@@ -133,6 +141,50 @@ export default class App extends EventEmmiter {
       .map((file) => `  ${file.isFile() ? msg.file(file.name) : msg.dir(file.name)}`);
     const currentDir = msg.dir(`${this.workingDirectory}/`);
     return `${currentDir}\n${filesList.join('\n')}`;
+  };
+
+  handleCat = async (args) => {
+    const [ pathToFile ] = this.checkArgs(args, 1);
+    const source = path.resolve(this.workingDirectory, pathToFile);
+    return await cat(source);
+  };
+
+  handleAdd = async (args) => {
+    const [ pathToFile ] = this.checkArgs(args, 1);
+    const source = path.resolve(this.workingDirectory, pathToFile);
+    await add(source);
+    return msg.service(`File successfully added ${source}`);
+  };
+
+  handleRn = async (args) => {
+    const [ pathToFile, newFileName ] = this.checkArgs(args, 2);
+    const source = path.resolve(this.workingDirectory, pathToFile);
+    const destination = path.resolve(this.workingDirectory, newFileName); 
+    await rename(source, destination);
+    return msg.service(`File ${source} successfully renamed to ${destination}`);
+  };
+
+  handleCp = async (args) => {
+    const [ pathToFile, pathToNewDir ] = this.checkArgs(args, 2);
+    const source = path.resolve(this.workingDirectory, pathToFile);
+    const destination = path.resolve(this.workingDirectory, pathToNewDir, pathToFile); 
+    await copy(source, destination);
+    return msg.service(`File ${source} successfully copied to ${destination}`);
+  };
+
+  handleMv = async (args) => {
+    const [ pathToFile, pathToNewDir ] = this.checkArgs(args, 2);
+    const source = path.resolve(this.workingDirectory, pathToFile);
+    const destination = path.resolve(this.workingDirectory, pathToNewDir, pathToFile); 
+    await move(source, destination);
+    return msg.service(`File ${source} successfully moved to ${destination}`);
+  };
+
+  handleRm = async (args) => {
+    const [ pathToFile ] = this.checkArgs(args, );
+    const source = path.resolve(this.workingDirectory, pathToFile); 
+    await remove(source);
+    return msg.service(`File ${source} successfully removed`);
   };
 }
 

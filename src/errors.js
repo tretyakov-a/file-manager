@@ -1,7 +1,7 @@
 
 class OperationFailedError extends Error {
   constructor(operation) {
-    super(`Operation failed ${operation}`);
+    super(`Operation failed: ${operation}`);
     this.operation = operation;
     this.name = this.constructor.name;
   }
@@ -9,7 +9,7 @@ class OperationFailedError extends Error {
 
 class InvalidInputError extends Error {
   constructor(input) {
-    super(`Invalid input '${input}'`);
+    super(`Invalid input: '${input}'`);
     this.input = input;
     this.name = this.constructor.name;
   }
@@ -17,7 +17,7 @@ class InvalidInputError extends Error {
 
 class InvalidArgumentError extends Error {
   constructor(arg, config) {
-    super(`Incorrect command '${arg}': supported commands list: ${config}`);
+    super(`Incorrect command: '${arg}': supported commands list: ${config}`);
     this.arg = arg;
     this.name = this.constructor.name;
   }

@@ -7,10 +7,7 @@ const cd = async (source) => {
     await fsPromises.access(source, fs.constants.F_OK);
     return true;
   } catch (err) {
-    if (err.code === 'ENOENT') {
-      throw new OperationFailedError(`cd ${source}`);
-    }
-    console.error(err);
+    throw new OperationFailedError(`cd '${source}': ${err.message}`);
   }
 }
 

@@ -6,10 +6,7 @@ const list = async (source) => {
     const filesStats = await fsPromises.readdir(source, { withFileTypes: true });
     return filesStats;
   } catch (err) {
-    if (err.code === 'ENOENT') {
-      throw new OperationFailedError(`list ${source}`);
-    }
-    console.error(err);
+    throw new OperationFailedError(`list '${source}': ${err.message}`);
   }
 }
 
