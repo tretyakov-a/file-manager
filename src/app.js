@@ -10,6 +10,7 @@ import { list, cd } from './commands/nwd/index.js';
 import myOs from './commands/os.js';
 import hash from './commands/hash.js';
 import archive from './commands/archive.js';
+import help from './commands/help.js';
 
 const msg = {
   greet: colorize(colors.yellow),
@@ -105,6 +106,7 @@ export default class App extends EventEmmiter {
 
   async _processCommand(command, args) {
     switch(command) {
+      case 'help': return help();
       case 'exit': return this.emit(App.EVENTS.CLOSE);
       case 'up': return this.handleUp();
       case 'cd': return await this.handleCd(args);
@@ -120,6 +122,7 @@ export default class App extends EventEmmiter {
       case 'compress':
       case 'decompress':
         return await this.handleArchive(args, command);
+      case '': return '';
       default: throw new InvalidInputError(command);
     }
   }
