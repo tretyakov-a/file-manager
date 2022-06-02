@@ -9,6 +9,7 @@ import { cat, add, rename, copy, move, remove } from './commands/fs/index.js';
 import { list, cd } from './commands/nwd/index.js';
 import myOs from './commands/os.js';
 import hash from './commands/hash.js';
+import archive from './commands/archive.js';
 
 const msg = {
   greet: colorize(colors.yellow),
@@ -116,6 +117,9 @@ export default class App extends EventEmmiter {
       case 'rm': return await this.handleRm(args);
       case 'os': return await this.handleOs(args);
       case 'hash': return await this.handleHash(args);
+      case 'compress':
+      case 'decompress':
+        return await this.handleArchive(args, command);
       default: throw new InvalidInputError(command);
     }
   }
@@ -202,7 +206,15 @@ export default class App extends EventEmmiter {
     const [ pathToFile ] = this.checkArgs(args, 1);
     const source = path.resolve(this.workingDirectory, pathToFile); 
     return await hash(source);
-  }
+  };
+
+  handleArchive = async (args, command) => {
+    const [ pathToFile, pathToNewDestination ] = this.checkArgs(args, 2);
+    const source = path.resolve(this.workingDirectory, pathToFile);
+    const destination = path.resolve(this.workingDirectory, pathToNewDestination);
+    await archive(source, destination, command);
+    return msg.service(`File ${source} successfully archived to ${destination}`);
+  };
 }
 
 App.EVENTS = {
