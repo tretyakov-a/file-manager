@@ -21,7 +21,16 @@ const colors = {
   whiteBright: color([97, 39]),
 };
 
+const msg = {
+  greet: colorize(colors.yellow),
+  error: colorize(colors.redBright),
+  service: colorize(colors.greenBright),
+  dir: colorize(colors.blueBright),
+  file: colorize(colors.white),
+}
+
 export {
+  msg,
   colorize,
   colors
 };
