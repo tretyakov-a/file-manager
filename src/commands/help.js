@@ -1,7 +1,7 @@
 import Command from './command.js';
 import { msg } from '../appearance.js';
 
-export default new Command('help', 0, async function() { return { message: (
+export default new Command('help', 0, async function() { return this.onSuccess(
 `${msg.dir('up')} - Go upper from current directory (when you are in the root folder this operation shouldn't change working directory)
 ${msg.dir('cd')} <path_to_directory> - Go to dedicated folder from current directory (path_to_directory can be relative or absolute)
 ${msg.dir('ls')} - List all files and folder in current directory and print it to console
@@ -21,4 +21,4 @@ ${msg.dir('os')} [<option>] Operating system info (prints following information 
 ${msg.dir('hash')} <path_to_file> - Calculate hash for file and print it into console
 ${msg.dir('compress')} <path_to_file> <path_to_destination> - Compress file (using Brotli algorytm)
 ${msg.dir('decompress')} <path_to_file> <path_to_destination> - Decompress file (using Brotli algorytm)`
-)}});
+)});

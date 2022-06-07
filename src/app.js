@@ -31,11 +31,12 @@ export default class App extends EventEmmiter {
     }
   }
 
-  _writePromt = (message) => {
+  _writePromt = ({ message, data } = {}) => {
     const { DIRECTORY, LINE_START } = App.MESSAGES;
     const dirMessage = DIRECTORY(this.workingDirectory);
+    const outputData = !data ? '' : `${data}\n`;
     const outputMessage = !message ? '' : `${message}\n`;
-    process.stdout.write(`${outputMessage}${msg.greet(dirMessage)}\n${msg.greet(LINE_START)}`);
+    process.stdout.write(`${outputMessage}${outputData}${msg.greet(dirMessage)}\n${msg.greet(LINE_START)}`);
   }
 
   _initEvents() {
@@ -59,17 +60,25 @@ export default class App extends EventEmmiter {
   onCommand = async (line) => {
     const [ command, ...args ] = line.split(' ').map((v) => v.trim());
     try {
-      const message = (await this._processCommand(command, args)) || '';
-      this._writePromt(message);
+      const commandResult = await this._processCommand(command, args);
+      this._writePromt(commandResult);
     } catch (err) {
       this.emit(App.EVENTS.ERROR, err);
     }
   }
 
+  async _processCommand(command, args) {
+    const cmd = this.commands[command];
+    if (cmd === undefined) {
+      throw new InvalidInputError(command);
+    }
+    return await cmd.run(this, args);
+  }
+  
   onError = (err) => {
     const isErrorCustom = isCustomError(err.name);
     if (isErrorCustom) {
-      this._writePromt(msg.error(err.message));
+      this._writePromt({ message: msg.error(err.message)} );
     } else {
       console.error(err);
     }
@@ -97,15 +106,6 @@ export default class App extends EventEmmiter {
       }, {});
     }
     this.commands = getCommands(commands);
-  }
-
-  async _processCommand(command, args) {
-    const cmd = this.commands[command];
-    if (cmd === undefined) {
-      throw new InvalidInputError(command);
-    }
-    const { message } = await cmd.run(this, args);
-    return message;
   }
 }
 

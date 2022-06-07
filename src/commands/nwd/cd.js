@@ -1,21 +1,16 @@
 import fsPromises from 'fs/promises';
 import fs from 'fs';
 import path from 'path';
-import { OperationFailedError } from '../../errors.js';
-import { msg } from '../../appearance.js';
 import Command from '../command.js';
 
-const cd = new Command('cd', 1, async function() {
+export default new Command('cd', 1, async function() {
   const [ pathToDir ] = this.args;
   const source = path.resolve(this.app.workingDirectory, pathToDir);
   try {
     await fsPromises.access(source, fs.constants.F_OK);
     this.app.workingDirectory = source;
-    const message = msg.service(`Working directory changed to ${source}`);
-    return { message };
+    return this.onSuccess(`Working directory changed to ${source}`);
   } catch (err) {
-    throw new OperationFailedError(`${this.name} '${source}': ${err.message}`);
+    this.onError(err);
   }
-})
-
-export default cd;
+});

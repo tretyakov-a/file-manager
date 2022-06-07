@@ -1,8 +1,9 @@
 
 class OperationFailedError extends Error {
-  constructor(operation) {
-    super(`Operation failed: ${operation}`);
+  constructor(operation, reason) {
+    super(`Operation failed: ${operation}. Reason: ${reason.message}`);
     this.operation = operation;
+    this.reason = reason;
     this.name = this.constructor.name;
   }
 }

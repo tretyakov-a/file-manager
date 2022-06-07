@@ -1,4 +1,5 @@
-import { InvalidInputError } from '../errors.js';
+import { InvalidInputError, OperationFailedError } from '../errors.js';
+import { msg } from '../appearance.js';
 
 export default class Command {
   constructor(name, requiredNumberOfArgs, handler) {
@@ -13,6 +14,15 @@ export default class Command {
     this.checkArgs();
 
     return this.handler.call(this);
+  }
+
+  onSuccess(message, data) {
+    const outputMessage = message && msg.service(message);
+    return { message: outputMessage, data };
+  }
+
+  onError(err) {
+    throw new OperationFailedError(this.name, err);
   }
 
   checkArgs() {

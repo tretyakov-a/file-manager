@@ -5,9 +5,8 @@ export default new Command('decompress', 2, async function() {
   const [ pathToFile, pathToNewDestination ] = this.args;
   try {
     const [source, destination] =  await archive(pathToFile, pathToNewDestination, this.app.workingDirectory, this.name);
-    const message = msg.service(`File ${source} successfully decompressed to ${destination}`);
-    return { message };
+    return this.onSuccess(`File ${source} successfully decompressed to ${destination}`);
   } catch (err) {
-    throw err;
+    this.onError(err);
   }
 });

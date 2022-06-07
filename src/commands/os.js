@@ -1,6 +1,4 @@
 import osNode from 'os';
-import { OperationFailedError } from '../errors.js';
-import { msg } from '../appearance.js';
 import Command from './command.js';
 
 const getCpusInfo = () => {
@@ -19,17 +17,15 @@ const keys = {
   '--architecture': () => osNode.platform(),
 };
 
-const os = new Command('os', 1, async function() {
+export default new Command('os', 1, async function() {
   const [ key ] = this.args;
   if (!keys[key]) {
-    throw new OperationFailedError(`${this.name}. Reason: invalid key '${key}'`);
+    this.onError(new Error(`invalid key '${key}'`));
   }
   try {
-    const message = msg.dir(await keys[key].call(null));
-    return { message };
+    const data = await keys[key].call(null);
+    return this.onSuccess(undefined, data);
   } catch (err) {
-    throw new OperationFailedError(`${this.name}. Reason: ${err.message}`);
+    this.onError(err);
   }
 });
-
-export default os;
