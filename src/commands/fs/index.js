@@ -5,6 +5,6 @@ import copy from './copy.js';
 import move from './move.js';
 import remove from './remove.js';
 
-export {
+export default {
   cat, add, rename, copy, move, remove,
-}
+};

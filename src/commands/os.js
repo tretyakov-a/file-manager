@@ -1,5 +1,7 @@
-import { OperationFailedError } from '../errors.js';
 import osNode from 'os';
+import { OperationFailedError } from '../errors.js';
+import { msg } from '../appearance.js';
+import Command from './command.js';
 
 const getCpusInfo = () => {
   const cpus = osNode.cpus();
@@ -17,15 +19,17 @@ const keys = {
   '--architecture': () => osNode.platform(),
 };
 
-const os = async (key) => {
+const os = new Command('os', 1, async function() {
+  const [ key ] = this.args;
   if (!keys[key]) {
-    throw new OperationFailedError(`os. Reason: invalid key '${key}'`);
+    throw new OperationFailedError(`${this.name}. Reason: invalid key '${key}'`);
   }
   try {
-    return await keys[key].call(null);
+    const message = msg.dir(await keys[key].call(null));
+    return { message };
   } catch (err) {
-    throw new OperationFailedError(`os. Reason: ${err.message}`);
+    throw new OperationFailedError(`${this.name}. Reason: ${err.message}`);
   }
-}
+});
 
 export default os;
