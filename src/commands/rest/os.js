@@ -1,5 +1,5 @@
 import osNode from 'os';
-import Command from './command.js';
+import Command from '../command.js';
 
 const getCpusInfo = () => {
   const cpus = osNode.cpus();

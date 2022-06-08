@@ -1,5 +1,5 @@
-import Command from './command.js';
-import App from '../app.js';
+import Command from '../command.js';
+import App from '../../app.js';
 
 async function exit() {
   this.app.emit(App.EVENTS.CLOSE);

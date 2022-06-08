@@ -1,6 +1,6 @@
 import crypto from 'crypto';
-import Command from './command.js';
-import { createReadStream } from './fs/utils.js';
+import Command from '../command.js';
+import { createReadStream } from '../fs/utils.js';
 
 async function hash() {
   const [ pathToFile ] = this.args;

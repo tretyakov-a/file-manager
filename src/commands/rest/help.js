@@ -1,5 +1,5 @@
-import Command from './command.js';
-import commandsInfo from './index.js';
+import Command from '../command.js';
+import commandsInfo from '../index.js';
 
 async function help() {
   const data = commandsInfo.map(Command.printCommandInfo);

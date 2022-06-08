@@ -1,13 +1,10 @@
 import myFs from './fs/index.js';
 import nwd from './nwd/index.js';
-import myOs from './os.js';
-import hash from './hash.js';
 import archive from './archive/index.js';
-import { options as help }  from './help.js';
-import exit from './exit.js';
+import rest from './rest/index.js';
 
 const commands = {
-  myFs, nwd, myOs, hash, archive, help, exit,
+  myFs, nwd, archive, rest,
 };
 
 const getCommands = (cmds) => {
