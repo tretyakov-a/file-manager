@@ -6,9 +6,6 @@ import { toSnakeCase } from './fs/utils.js';
 export default class Command {
   constructor(options, app) {
     this.options = options;
-    // Object.keys(options).forEach((key) => {
-    //   this[key] = options[key];
-    // });
 
     this.app = app;
     this.requiredArgsNumber = {

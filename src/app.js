@@ -23,7 +23,7 @@ export default class App extends EventEmmiter {
       });
       userInfo = os.userInfo();
       this.userName = argValues.userName || userInfo.username;
-      this.workingDirectory = path.resolve(userInfo.homedir, 'tmp');
+      this.workingDirectory = userInfo.homedir;
   
       this.emit(App.EVENTS.START);
     } catch (err) {
@@ -54,14 +54,16 @@ export default class App extends EventEmmiter {
   onClose = () => {
     process.stdout.write(App.MESSAGES.FAREWELL(this.userName));
     this.readline.close();
-    process.exitCode = 1;
+    process.exitCode = 0;
   }
 
   onCommand = async (line) => {
     const [ command, ...args ] = line.split(' ').map((v) => v.trim());
     try {
       const commandResult = await this._processCommand(command, args);
-      this._writePromt(commandResult);
+      if (command !== '.exit') {
+        this._writePromt(commandResult);
+      }
     } catch (err) {
       this.emit(App.EVENTS.ERROR, err);
     }
@@ -77,14 +79,11 @@ export default class App extends EventEmmiter {
   
   onError = (err) => {
     const isErrorCustom = isCustomError(err.name);
-    if (isErrorCustom) {
-      this._writePromt({ message: msg.error(err.message)} );
-    } else {
-      console.error(err);
-    }
     if (!isErrorCustom || err instanceof InvalidArgumentError) {
-      this.emit(App.EVENTS.CLOSE);
+      console.error(msg.error(err.message));
+      return this.emit(App.EVENTS.CLOSE);
     }
+    this._writePromt({ message: msg.error(err.message)} );
   }
   
   _initReadline() {

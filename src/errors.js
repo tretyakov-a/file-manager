@@ -18,7 +18,7 @@ class InvalidInputError extends Error {
 
 class InvalidArgumentError extends Error {
   constructor(arg, config) {
-    super(`Incorrect command: '${arg}': supported commands list: ${config}`);
+    super(`Incorrect argument: '${arg}': supported arguments list: --username=<value>`);
     this.arg = arg;
     this.name = this.constructor.name;
   }

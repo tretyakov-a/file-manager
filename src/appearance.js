@@ -22,10 +22,10 @@ const colors = {
 };
 
 const msg = {
-  greet: colorize(colors.yellow),
+  greet: colorize(colors.yellowBright),
   error: colorize(colors.redBright),
   service: colorize(colors.greenBright),
-  dir: colorize(colors.blueBright),
+  dir: colorize(colors.cyanBright),
   file: colorize(colors.white),
   hl: colorize(colors.magentaBright),
 }

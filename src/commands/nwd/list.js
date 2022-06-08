@@ -9,7 +9,7 @@ async function list() {
     const filesStats = await fsPromises.readdir(pathToDirectory, { withFileTypes: true });
     const filesList = filesStats.map((file) => `  ${file.isFile() ? msg.file(file.name) : msg.dir(file.name)}`);
     const data = `${filesList.join('\n')}`;
-    return this.onSuccess(`ls '${pathToDirectory}/':`, data);
+    return this.onSuccess(undefined, data);
   } catch (err) {
     this.onError(err);
   }
