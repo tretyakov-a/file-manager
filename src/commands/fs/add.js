@@ -3,8 +3,9 @@ import { createWriteStream } from '../fs/utils.js';
 
 async function add() {
   const [ pathToFile ] = this.args;
+  let writeStream;
   try {
-    const writeStream = await createWriteStream(pathToFile);  
+    writeStream = await createWriteStream(pathToFile);  
 
     // add some content for testing
     await new Promise((resolve, reject) => {
@@ -13,10 +14,11 @@ async function add() {
         resolve();
       });
     })
-
     return this.onSuccess(`File successfully added ${pathToFile}`);
   } catch (err) {
     this.onError(err);
+  } finally {
+    if (writeStream) writeStream.close();
   }
 }
 

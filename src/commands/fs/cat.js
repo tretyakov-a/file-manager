@@ -3,9 +3,9 @@ import { createReadStream } from '../fs/utils.js';
 
 async function cat() {
   const [ pathToFile ] = this.args;
-
+  let readStream;
   try {
-    const readStream = await createReadStream(pathToFile);
+    readStream = await createReadStream(pathToFile);
 
     await new Promise((resolve, reject) => {
       readStream.on('end', () => {
@@ -19,6 +19,8 @@ async function cat() {
     return this.onSuccess();
   } catch (err) {
     this.onError(err);
+  } finally {
+    if (readStream) readStream.close();
   }
 }
 

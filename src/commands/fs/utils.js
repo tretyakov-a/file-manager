@@ -36,10 +36,17 @@ const createReadStream = (source) => createStream(source, 'r');
 const createWriteStream = (source) => createStream(source, 'wx');
 
 async function copyFile(src, dest) {
-  const readStream = await createReadStream(src);
-  const writeStream = await createWriteStream(dest);
-
-  return pipeline(readStream, writeStream);
+  let readStream, writeStream;
+  try {
+    readStream = await createReadStream(src);
+    writeStream = await createWriteStream(dest);
+    return await pipeline(readStream, writeStream);
+  } catch (err) {
+    throw err;
+  } finally {
+    if (readStream) readStream.close();
+    if (writeStream) writeStream.close();
+  }
 }
 
 export {
