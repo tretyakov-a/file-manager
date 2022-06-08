@@ -1,20 +1,22 @@
-import fsPromises from 'fs/promises';
 import Command from '../command.js';
+import { createWriteStream } from '../fs/utils.js';
 
 async function add() {
   const [ pathToFile ] = this.args;
-  let fd = null;
   try {
-    fd = await fsPromises.open(pathToFile, 'wx');
-    
+    const writeStream = await createWriteStream(pathToFile);  
+
     // add some content for testing
-    await fd.write(`Hello world! Initial file location is ${pathToFile}\n`);
+    await new Promise((resolve, reject) => {
+      writeStream.write(`Hello world! Initial file location is ${pathToFile}\n`, (err) => {
+        if (err) reject(err);
+        resolve();
+      });
+    })
 
     return this.onSuccess(`File successfully added ${pathToFile}`);
   } catch (err) {
     this.onError(err);
-  } finally {
-    if (fd) await fd.close();
   }
 }
 

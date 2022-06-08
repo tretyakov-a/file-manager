@@ -1,6 +1,6 @@
 import crypto from 'crypto';
-import fs from 'fs';
 import Command from './command.js';
+import { createReadStream } from './fs/utils.js';
 
 async function hash() {
   const [ pathToFile ] = this.args;
@@ -9,7 +9,7 @@ async function hash() {
   hash.setEncoding('hex');
 
   try {
-    const readStream = fs.createReadStream(pathToFile);
+    const readStream = await createReadStream(pathToFile);
     return await new Promise((resolve, reject) => {
       readStream.on('error', (err) => reject(err));
       readStream.on('end', () => {

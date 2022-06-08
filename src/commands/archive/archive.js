@@ -1,15 +1,11 @@
-import fs from 'fs';
 import { pipeline } from 'stream/promises';
 import { createBrotliCompress, createBrotliDecompress } from 'zlib';
-import { isFileExists } from '../fs/utils.js';
+import { createReadStream, createWriteStream } from '../fs/utils.js';
 
 const archive = async (pathToFile, pathToNewDestination, command) => {
-  if (await isFileExists(pathToNewDestination)) {
-    throw new Error(`File already exists '${pathToNewDestination}'`);
-  }
   try {
-    const readStream = fs.createReadStream(pathToFile);
-    const writeStream = fs.createWriteStream(pathToNewDestination);
+    const readStream = await createReadStream(pathToFile);
+    const writeStream = await createWriteStream(pathToNewDestination);
     const transform = command === 'compress'
       ? createBrotliCompress()
       : createBrotliDecompress();
