@@ -4,7 +4,7 @@ import archive from './archive.js';
 async function compress() {
   const [ pathToFile, pathToNewDestination ] = this.args;
   try {
-    await archive(pathToFile, pathToNewDestination, this.name);
+    await archive(pathToFile, pathToNewDestination, this.options.name);
     return this.onSuccess(`File ${pathToFile} successfully compressed to ${pathToNewDestination}`);
   } catch (err) {
     this.onError(err);
