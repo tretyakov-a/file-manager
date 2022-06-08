@@ -5,7 +5,7 @@ import EventEmmiter from 'events';
 import { InvalidInputError, InvalidArgumentError, isCustomError } from './errors.js';
 import parseArguments from './arguments-parse.js';
 import { msg } from './appearance.js';
-import commands from './commands/index.js';
+import commandsInfo from './commands/index.js';
 import Command from './commands/command.js';
 
 export default class App extends EventEmmiter {
@@ -72,7 +72,7 @@ export default class App extends EventEmmiter {
     if (cmd === undefined) {
       throw new InvalidInputError(command);
     }
-    return await cmd.run(this, args);
+    return await cmd.run(args);
   }
   
   onError = (err) => {
@@ -97,15 +97,9 @@ export default class App extends EventEmmiter {
   }
 
   _initCommands() {
-    const getCommands = (cmds) => {
-      if (cmds instanceof Command) {
-        return { [cmds.name]: cmds };
-      }
-      return Object.keys(cmds).reduce((acc, key) => {
-        return { ...acc, ...getCommands(cmds[key]) };
-      }, {});
-    }
-    this.commands = getCommands(commands);
+    this.commands = commandsInfo.reduce((acc, cmdInfo) => {
+      return { ...acc, [cmdInfo.name]: new Command(cmdInfo, this)}
+    }, {});
   }
 }
 

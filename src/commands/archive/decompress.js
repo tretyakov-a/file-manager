@@ -1,12 +1,22 @@
 import Command from '../command.js';
 import archive from './archive.js';
 
-export default new Command('decompress', 2, async function() {
+async function decompress() {
   const [ pathToFile, pathToNewDestination ] = this.args;
   try {
-    const [source, destination] =  await archive(pathToFile, pathToNewDestination, this.app.workingDirectory, this.name);
-    return this.onSuccess(`File ${source} successfully decompressed to ${destination}`);
+    await archive(pathToFile, pathToNewDestination, this.name);
+    return this.onSuccess(`File ${pathToFile} successfully decompressed to ${pathToNewDestination}`);
   } catch (err) {
     this.onError(err);
   }
-});
+}
+
+export default Command.createOptions(
+  'decompress',
+  [
+    Command.createArg('pathToFile', Command.ARGS.PATH),
+    Command.createArg('pathToNewDestination', Command.ARGS.PATH),
+  ],
+  'Decompress file (using Brotli algorytm)',
+  decompress
+);

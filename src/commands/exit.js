@@ -1,7 +1,14 @@
 import Command from './command.js';
 import App from '../app.js';
 
-export default new Command('.exit', 0, async function() {
+async function exit() {
   this.app.emit(App.EVENTS.CLOSE);
   return this.onSuccess('Exiting...');
-});
+}
+
+export default Command.createOptions(
+  '.exit',
+  [],
+  'Exit programm',
+  exit
+);

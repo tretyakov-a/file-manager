@@ -10,6 +10,19 @@ async function isFileExists(source) {
   }
 }
 
+
+const toSnakeCase = (str) => {
+  let result = '';
+  for (const c of str) {
+    if (c === c.toUpperCase()) {
+      result += '_';
+    }
+    result += c.toLowerCase();
+  }
+  return result;
+};
+
 export {
-  isFileExists
+  toSnakeCase,
+  isFileExists,
 };

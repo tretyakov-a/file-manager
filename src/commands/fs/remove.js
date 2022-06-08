@@ -1,14 +1,22 @@
 import fsPromises from 'fs/promises';
-import path from 'path';
 import Command from '../command.js';
 
-export default new Command('rm', 1, async function() {
+async function remove() {
   const [ pathToFile ] = this.args;
-  const source = path.resolve(this.app.workingDirectory, pathToFile); 
+
   try {
-    await fsPromises.rm(source);
-    return this.onSuccess(`File ${source} successfully removed`);
+    await fsPromises.rm(pathToFile);
+    return this.onSuccess(`File ${pathToFile} successfully removed`);
   } catch (err) {
     this.onError(err);
   }
-});
+}
+
+export default Command.createOptions(
+  'rm',
+  [
+    Command.createArg('pathToFile', Command.ARGS.PATH),
+  ],
+  'Delete file',
+  remove
+);

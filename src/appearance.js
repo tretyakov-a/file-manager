@@ -27,6 +27,7 @@ const msg = {
   service: colorize(colors.greenBright),
   dir: colorize(colors.blueBright),
   file: colorize(colors.white),
+  hl: colorize(colors.magentaBright),
 }
 
 export {

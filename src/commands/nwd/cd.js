@@ -1,16 +1,24 @@
 import fsPromises from 'fs/promises';
 import fs from 'fs';
-import path from 'path';
 import Command from '../command.js';
 
-export default new Command('cd', 1, async function() {
-  const [ pathToDir ] = this.args;
-  const source = path.resolve(this.app.workingDirectory, pathToDir);
+async function cd() {
+  const [ pathToDirectory ] = this.args;
+
   try {
-    await fsPromises.access(source, fs.constants.F_OK);
-    this.app.workingDirectory = source;
-    return this.onSuccess(`Working directory changed to ${source}`);
+    await fsPromises.access(pathToDirectory, fs.constants.F_OK);
+    this.app.workingDirectory = pathToDirectory;
+    return this.onSuccess(`Working directory changed to ${pathToDirectory}`);
   } catch (err) {
     this.onError(err);
   }
-});
+}
+
+export default Command.createOptions(
+  'cd',
+  [
+    Command.createArg('pathToDirectory', Command.ARGS.PATH),
+  ],
+  'Go to dedicated folder from current directory (path_to_directory can be relative or absolute)',
+  cd
+);

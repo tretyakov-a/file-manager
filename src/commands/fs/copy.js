@@ -1,21 +1,27 @@
 import fsPromises from 'fs/promises';
-import path from 'path';
 import { isFileExists } from './utils.js';
 import Command from '../command.js';
 
-export default new Command('cp', 2, async function() {
-  const [ pathToFile, pathToNewDir ] = this.args;
-  const source = path.resolve(this.app.workingDirectory, pathToFile);
-  const destination = path.resolve(this.app.workingDirectory, pathToNewDir, pathToFile); 
+async function copy() {
+  const [ pathToFile, pathToNewDirectory ] = this.args;
 
-  if (await isFileExists(destination)) {
-    this.onError(new Error(`File already exists '${destination}'`));
+  if (await isFileExists(pathToNewDirectory)) {
+    this.onError(new Error(`File already exists '${pathToNewDirectory}'`));
   }
   try {
-    await fsPromises.copyFile(source, destination);
-    return this.onSuccess(`File '${source}' successfully copied to '${destination}'`)
+    await fsPromises.copyFile(pathToFile, pathToNewDirectory);
+    return this.onSuccess(`File '${pathToFile}' successfully copied to '${pathToNewDirectory}'`)
   } catch (err) {
     this.onError(err);
   }
-});
+}
 
+export default Command.createOptions(
+  'cp',
+  [
+    Command.createArg('pathToFile', Command.ARGS.PATH),
+    Command.createArg('pathToNewDirectory', Command.ARGS.DIR_PATH),
+  ],
+  'Copy file',
+  copy
+);

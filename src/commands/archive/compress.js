@@ -1,12 +1,23 @@
 import Command from '../command.js';
 import archive from './archive.js';
 
-export default new Command('compress', 2, async function() {
+async function compress() {
   const [ pathToFile, pathToNewDestination ] = this.args;
   try {
-    const [source, destination] =  await archive(pathToFile, pathToNewDestination, this.app.workingDirectory, this.name);
-    return this.onSuccess(`File ${source} successfully compressed to ${destination}`);
+    await archive(pathToFile, pathToNewDestination, this.name);
+    return this.onSuccess(`File ${pathToFile} successfully compressed to ${pathToNewDestination}`);
   } catch (err) {
     this.onError(err);
   }
-});
+}
+
+export default Command.createOptions(
+  'compress',
+  [
+    Command.createArg('pathToFile', Command.ARGS.PATH),
+    Command.createArg('pathToNewDestination', Command.ARGS.PATH),
+  ],
+  'Compress file (using Brotli algorytm)',
+  compress
+);
+
