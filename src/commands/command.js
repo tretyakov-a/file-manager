@@ -1,7 +1,7 @@
 import path from 'path';
 import { InvalidInputError, OperationFailedError } from '../errors.js';
 import { msg } from '../appearance.js';
-import { toSnakeCase } from './fs/utils.js';
+import { toSnakeCase } from './utils.js';
 
 export default class Command {
   constructor(options, app) {

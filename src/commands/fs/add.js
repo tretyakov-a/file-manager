@@ -1,5 +1,5 @@
 import Command from '../command.js';
-import { createWriteStream } from '../fs/utils.js';
+import { createWriteStream } from '../utils.js';
 
 async function add() {
   const [ pathToFile ] = this.args;

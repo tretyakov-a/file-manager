@@ -1,6 +1,6 @@
 import { pipeline } from 'stream/promises';
 import { createBrotliCompress, createBrotliDecompress } from 'zlib';
-import { createReadStream, createWriteStream } from '../fs/utils.js';
+import { createReadStream, createWriteStream } from '../utils.js';
 
 const archive = async (pathToFile, pathToNewDestination, command) => {
   let readStream, writeStream;

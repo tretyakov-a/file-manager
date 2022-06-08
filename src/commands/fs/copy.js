@@ -1,4 +1,4 @@
-import { copyFile } from './utils.js';
+import { copyFile } from '../utils.js';
 import Command from '../command.js';
 
 async function copy() {

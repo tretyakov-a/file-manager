@@ -1,5 +1,5 @@
 import fsPromises from 'fs/promises';
-import { isFileExists } from './utils.js';
+import { isFileExists } from '../utils.js';
 import Command from '../command.js';
 
 async function rename() {

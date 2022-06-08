@@ -1,5 +1,5 @@
 import Command from '../command.js';
-import { createReadStream } from '../fs/utils.js';
+import { createReadStream } from '../utils.js';
 
 async function cat() {
   const [ pathToFile ] = this.args;
