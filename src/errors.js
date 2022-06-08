@@ -9,18 +9,25 @@ class OperationFailedError extends Error {
 }
 
 class InvalidInputError extends Error {
-  constructor(input) {
-    super(`Invalid input: '${input}'`);
-    this.input = input;
+  constructor(command, args) {
+    super(`Invalid input: '${command}${args.length === 0 ? '' : ` ${args.join(' ')}`}'`);
+    this.command = command;
     this.name = this.constructor.name;
   }
 }
 
 class InvalidArgumentError extends Error {
   constructor(arg, config) {
-    super(`Incorrect argument: '${arg}': supported arguments list: --username=<value>`);
+    super(`Invalid argument: '${arg}': supported arguments list: --username=<value>`);
     this.arg = arg;
     this.name = this.constructor.name;
+  }
+}
+
+class InvalidKeyError extends Error {
+  constructor(key) {
+    super(`Invalid key '${key}'`);
+    this.key = key;
   }
 }
 
@@ -28,6 +35,7 @@ const errors = {
   OperationFailedError,
   InvalidInputError,
   InvalidArgumentError,
+  InvalidKeyError,
 };
 
 const isCustomError = (errorName) => {
@@ -38,5 +46,6 @@ export {
   OperationFailedError,
   InvalidInputError,
   InvalidArgumentError,
+  InvalidKeyError,
   isCustomError,
 };

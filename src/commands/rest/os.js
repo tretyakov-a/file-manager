@@ -1,6 +1,14 @@
 import osNode from 'os';
 import Command from '../command.js';
 
+const KEYS = {
+  EOL: '--EOL',
+  CPUS: '--cpus',
+  HOMEDIR: '--homedir',
+  USERNAME: '--username',
+  ARCHITECTURE: '--architecture',
+}
+
 const getCpusInfo = () => {
   const cpus = osNode.cpus();
   const results = cpus.map(({ model, speed}, index) => {
@@ -9,21 +17,18 @@ const getCpusInfo = () => {
   return `Overall amount: ${results.length}: \n${results.join('\n')}`;
 }
 
-const keys = {
-  '--EOL': () => osNode.EOL === '\n' ? '\\n' : '\\r\\n',
-  '--cpus': getCpusInfo,
-  '--homedir': () => osNode.userInfo().homedir,
-  '--username': () => osNode.userInfo().username,
-  '--architecture': () => osNode.platform(),
+const keysHandlers = {
+  [KEYS.EOL]: () => osNode.EOL === '\n' ? '\\n' : '\\r\\n',
+  [KEYS.CPUS]: getCpusInfo,
+  [KEYS.HOMEDIR]: () => osNode.userInfo().homedir,
+  [KEYS.USERNAME]: () => osNode.userInfo().username,
+  [KEYS.ARCHITECTURE]: () => osNode.platform(),
 };
 
 async function os() {
   const [ key ] = this.args;
-  if (!keys[key]) {
-    this.onError(new Error(`invalid key '${key}'`));
-  }
   try {
-    const data = await keys[key].call(null);
+    const data = await keysHandlers[key].call(null);
     return this.onSuccess(undefined, data);
   } catch (err) {
     this.onError(err);
@@ -36,10 +41,11 @@ export default Command.createOptions(
     Command.createArg('key', Command.ARGS.KEY),
   ],
   `Operating system info (prints following information in console)
-  --EOL - Get EOL (default system End-Of-Line)
-  --cpus - Get host machine CPUs info (overall amount of CPUS plus model and clock rate (in GHz) for each of them)
-  --homedir - Get home directory
-  --username - Get current system user name (Do not confuse with the username that is set when the application starts)
-  --architecture - Get CPU architecture for which Node.js binary has compiled`,
-  os
+  ${KEYS.EOL} - Get EOL (default system End-Of-Line)
+  ${KEYS.CPUS} - Get host machine CPUs info (overall amount of CPUS plus model and clock rate (in GHz) for each of them)
+  ${KEYS.HOMEDIR} - Get home directory
+  ${KEYS.USERNAME} - Get current system user name (Do not confuse with the username that is set when the application starts)
+  ${KEYS.ARCHITECTURE} - Get CPU architecture for which Node.js binary has compiled`,
+  os,
+  Object.values(KEYS),
 );

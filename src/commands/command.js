@@ -1,5 +1,5 @@
 import path from 'path';
-import { InvalidInputError, OperationFailedError } from '../errors.js';
+import { InvalidInputError, OperationFailedError, InvalidKeyError } from '../errors.js';
 import { msg } from '../appearance.js';
 import { toSnakeCase } from './utils.js';
 
@@ -27,6 +27,9 @@ export default class Command {
   }
 
   onError(err) {
+    if (err instanceof InvalidInputError || err instanceof InvalidKeyError) {
+      this.app.output.write(`${Command.printCommandInfo(this.options)}\n`);
+    }
     throw new OperationFailedError(this.options.name, err);
   }
 
@@ -38,8 +41,7 @@ export default class Command {
     } = this;
     const isArgsNumberValid = length >= min && length <= max;
     if (!isArgsNumberValid) {
-      process.stdout.write(`${Command.printCommandInfo(this.options)}\n`);
-      throw new InvalidInputError(name);
+      this.onError(new InvalidInputError(name, this.args));
     }
     this.args = argsConfig.map(this.processArg);
     return true;
@@ -52,8 +54,16 @@ export default class Command {
       case Command.ARGS.PATH: return this.processPath(argValue);
       case Command.ARGS.DIR_PATH: return this.processDirPath(argValue, prevArgValue);
       case Command.ARGS.NAME: return this.processName(argValue, prevArgValue);
+      case Command.ARGS.KEY: return this.processKey(argValue);
       default: return argValue;
     }
+  }
+
+  processKey(value) {
+    if (!this.options.keys.includes(value)) {
+      this.onError(new InvalidKeyError(value));
+    }
+    return value;
   }
 
   processPath(value) {
@@ -73,9 +83,9 @@ export default class Command {
   }
 }
 
-Command.createOptions = function(name, argsConfig, description, handler) {
+Command.createOptions = function(name, argsConfig, description, handler, keys = []) {
   return {
-    name, argsConfig, description, handler,
+    name, argsConfig, description, handler, keys,
   }
 }
 
