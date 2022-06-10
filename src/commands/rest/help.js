@@ -1,8 +1,8 @@
 import Command from '../command.js';
-import commandsInfo from '../index.js';
 
 async function help() {
-  const data = commandsInfo.map(Command.printCommandInfo);
+  const { commands } = this.app;
+  const data = Object.keys(commands).map((key) => commands[key].getCommandInfo());
   return this.onSuccess(undefined, data.join('\n'));
 }
 

@@ -28,7 +28,7 @@ export default class Command {
 
   onError(err) {
     if (err instanceof InvalidInputError || err instanceof InvalidKeyError) {
-      this.app.output.write(`${Command.printCommandInfo(this.options)}\n`);
+      this.app.output.write(`${this.getCommandInfo()}\n`);
     }
     throw new OperationFailedError(this.options.name, err);
   }
@@ -81,6 +81,16 @@ export default class Command {
     const resolvedFilePath = path.resolve(this.app.workingDirectory, prevValue);
     return path.resolve(path.parse(resolvedFilePath).dir, value);
   }
+
+  getCommandInfo = () => {
+    const { name, argsConfig, description } = this.options;
+    const nameOutput = msg.dir(`${name} `);
+    const argsOutput = argsConfig.length !== 0
+      ? msg.hl(argsConfig.map(({ name }) => `<${toSnakeCase(name)}> `).join(''))
+      : '';
+    return `${nameOutput}${argsOutput}${description}`;
+  }
+  
 }
 
 Command.createOptions = function(name, argsConfig, description, handler, keys = []) {
@@ -93,14 +103,6 @@ Command.createArg = function(name, type, required = true) {
   return {
     name, type, required,
   }
-}
-
-Command.printCommandInfo = ({ name, argsConfig, description }) => {
-  const nameOutput = msg.dir(`${name} `);
-  const argsOutput = argsConfig.length !== 0
-    ? msg.hl(argsConfig.map(({ name }) => `<${toSnakeCase(name)}> `).join(''))
-    : '';
-  return `${nameOutput}${argsOutput}${description}`;
 }
 
 Command.ARGS = {

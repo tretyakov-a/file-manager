@@ -1,4 +1,3 @@
-import path from 'path';
 import readline from 'readline';
 import os from 'os';
 import EventEmmiter from 'events';
@@ -11,6 +10,7 @@ import Command from './commands/command.js';
 export default class App extends EventEmmiter {
   constructor(args) {
     super();
+    this.output = process.stdout;
     this._initEvents();
     this._initReadline();
     this._initCommands();
@@ -36,7 +36,7 @@ export default class App extends EventEmmiter {
     const dirMessage = DIRECTORY(this.workingDirectory);
     const outputData = !data ? '' : `${data}\n`;
     const outputMessage = !message ? '' : `${message}\n`;
-    process.stdout.write(`${outputMessage}${outputData}${msg.greet(dirMessage)}\n${msg.greet(LINE_START)}`);
+    this.output.write(`${outputMessage}${outputData}${msg.greet(dirMessage)}\n${msg.greet(LINE_START)}`);
   }
 
   _initEvents() {
@@ -47,12 +47,12 @@ export default class App extends EventEmmiter {
   }
 
   onStart = () => {
-    process.stdout.write(App.MESSAGES.WELCOME(this.userName));
+    this.output.write(App.MESSAGES.WELCOME(this.userName));
     this._writePromt();
   }
 
   onClose = () => {
-    process.stdout.write(App.MESSAGES.FAREWELL(this.userName));
+    this.output.write(App.MESSAGES.FAREWELL(this.userName));
     this.readline.close();
     process.exitCode = 0;
   }
@@ -72,7 +72,7 @@ export default class App extends EventEmmiter {
   async _processCommand(command, args) {
     const cmd = this.commands[command];
     if (cmd === undefined) {
-      throw new InvalidInputError(command);
+      throw new InvalidInputError(command, args);
     }
     return await cmd.run(args);
   }
@@ -89,7 +89,7 @@ export default class App extends EventEmmiter {
   _initReadline() {
     this.readline = readline.createInterface({
       input: process.stdin,
-      output: process.stdout,
+      output: this.output,
     });
     this.readline.on('line', (line) => this.emit(App.EVENTS.COMMAND, line.trim()));
     this.readline.on('SIGINT', () => this.emit(App.EVENTS.CLOSE));
@@ -111,7 +111,7 @@ App.EVENTS = {
 
 App.MESSAGES = {
   LINE_START: '> ',
-  WELCOME: (username) => msg.greet(`*** Welcome to the File Manager, ${username}! ***\n`),
+  WELCOME: (username) => msg.greet(`*** Welcome to the File Manager, ${username}! Enter 'help' to list available commands. ***\n`),
   FAREWELL: (username = 'unknown') => msg.greet(`\nThank you for using File Manager, ${username}!\n`),
-  DIRECTORY: (dir) => `You are currently in ${dir}`,
+  DIRECTORY: (dir) => `You are currently in ${msg.dir(dir)}`,
 };

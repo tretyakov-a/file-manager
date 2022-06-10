@@ -9,10 +9,10 @@ async function cat() {
 
     await new Promise((resolve, reject) => {
       readStream.on('end', () => {
-        process.stdout.write('\n');
+        this.app.output.write('\n');
         resolve();
       });
-      readStream.pipe(process.stdout, { end: false })
+      readStream.pipe(this.app.output, { end: false })
         .on('error', reject);
     });
 

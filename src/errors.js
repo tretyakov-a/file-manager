@@ -9,7 +9,7 @@ class OperationFailedError extends Error {
 }
 
 class InvalidInputError extends Error {
-  constructor(command, args) {
+  constructor(command, args = []) {
     super(`Invalid input: '${command}${args.length === 0 ? '' : ` ${args.join(' ')}`}'`);
     this.command = command;
     this.name = this.constructor.name;
