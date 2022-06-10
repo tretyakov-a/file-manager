@@ -2,7 +2,7 @@ import readline from 'readline';
 import os from 'os';
 import EventEmmiter from 'events';
 import { InvalidInputError, InvalidArgumentError, isCustomError } from './errors.js';
-import parseArguments from './arguments-parse.js';
+import { parseAppArguments, parseCommand } from './parse.js';
 import { msg } from './appearance.js';
 import commandsInfo from './commands/index.js';
 import Command from './commands/command.js';
@@ -18,7 +18,7 @@ export default class App extends EventEmmiter {
     let argValues = null;
     let userInfo = null;
     try {
-      argValues = parseArguments(args, {
+      argValues = parseAppArguments(args, {
         userName: '--username'
       });
       userInfo = os.userInfo();
@@ -56,9 +56,9 @@ export default class App extends EventEmmiter {
     this.readline.close();
     process.exitCode = 0;
   }
-
+  
   onCommand = async (line) => {
-    const [ command, ...args ] = line.split(' ').map((v) => v.trim());
+    const [ command, ...args ] = parseCommand(line);
     try {
       const commandResult = await this._processCommand(command, args);
       if (command !== '.exit') {
