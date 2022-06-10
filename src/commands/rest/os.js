@@ -1,5 +1,6 @@
 import osNode from 'os';
 import Command from '../command.js';
+import { msg } from '../../appearance.js';
 
 const KEYS = {
   EOL: '--EOL',
@@ -12,7 +13,7 @@ const KEYS = {
 const getCpusInfo = () => {
   const cpus = osNode.cpus();
   const results = cpus.map(({ model, speed}, index) => {
-    return `#${index + 1} ${model}; Speed: ${speed / 1000}GHz`;
+    return `#${index + 1} ${msg.hl('Model:')} ${model}; ${msg.hl('Speed:')} ${speed / 1000}GHz`;
   });
   return `Overall amount: ${results.length}: \n${results.join('\n')}`;
 }
