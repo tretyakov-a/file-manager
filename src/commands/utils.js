@@ -64,6 +64,7 @@ async function copyFile(src, dest) {
 export {
   toSnakeCase,
   isFileExists,
+  isDirectory,
   createReadStream,
   createWriteStream,
   copyFile,

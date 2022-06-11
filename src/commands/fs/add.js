@@ -8,12 +8,12 @@ async function add() {
     writeStream = await createWriteStream(pathToFile);  
 
     // add some content for testing
-    await new Promise((resolve, reject) => {
-      writeStream.write(`Hello world! Initial file location is ${pathToFile}\n`, (err) => {
-        if (err) reject(err);
-        resolve();
-      });
-    })
+    // await new Promise((resolve, reject) => {
+    //   writeStream.write(`Hello world! Initial file location is ${pathToFile}\n`, (err) => {
+    //     if (err) reject(err);
+    //     resolve();
+    //   });
+    // })
     return this.onSuccess(`File successfully added ${pathToFile}`);
   } catch (err) {
     this.onError(err);

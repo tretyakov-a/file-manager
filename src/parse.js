@@ -1,7 +1,7 @@
 import { InvalidArgumentError } from './errors.js';
 
 function findName(argName, config) {
-  return Object.keys(config).find((key) => config[key].startsWith(argName));
+  return Object.keys(config).find((key) => config[key] === argName);
 }
 
 export function parseAppArguments(args, config) {

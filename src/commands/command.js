@@ -74,7 +74,8 @@ export default class Command {
   }
 
   processDirPath(value, prevValue) {
-    return path.resolve(this.app.workingDirectory, value, prevValue); 
+    const { base } = path.parse(prevValue);
+    return path.resolve(this.app.workingDirectory, value, base); 
   }
 
   processName(value, prevValue) {

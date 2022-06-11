@@ -18,7 +18,8 @@ class InvalidInputError extends Error {
 
 class InvalidArgumentError extends Error {
   constructor(arg, config) {
-    super(`Invalid argument: '${arg}': supported arguments list: --username=<value>`);
+    const argsOutput = Object.values(config).map((argName) => `${argName}=<value>`)
+    super(`Invalid argument: '${arg}': supported arguments list: ${argsOutput}`);
     this.arg = arg;
     this.name = this.constructor.name;
   }
