@@ -22,7 +22,19 @@ const toSnakeCase = (str) => {
   return result;
 };
 
-function createStream(source, flag = 'r') {
+async function isDirectory(source) {
+  try {
+    const sourceStat = await fsPromises.stat(source);
+    return sourceStat.isDirectory();
+  } catch {
+    return;
+  }
+}
+
+async function createStream(source, flag = 'r') {
+  if (await isDirectory()) {
+    throw new Error(`${source} is directory`);
+  }
   return new Promise((resolve, reject) => {
     const stream = flag === 'r'
       ? fs.createReadStream(source)

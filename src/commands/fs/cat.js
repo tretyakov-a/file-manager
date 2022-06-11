@@ -6,12 +6,12 @@ async function cat() {
   let readStream;
   try {
     readStream = await createReadStream(pathToFile);
-
     await new Promise((resolve, reject) => {
       readStream.on('end', () => {
         this.app.output.write('\n');
         resolve();
       });
+      readStream.on('error', reject);
       readStream.pipe(this.app.output, { end: false })
         .on('error', reject);
     });
