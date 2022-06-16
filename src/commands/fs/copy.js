@@ -3,12 +3,8 @@ import Command from '../command.js';
 
 async function copy() {
   const [ pathToFile, pathToNewDirectory ] = this.args;
-  try {
-    await copyFile(pathToFile, pathToNewDirectory);
-    return this.onSuccess(`File '${pathToFile}' successfully copied to '${pathToNewDirectory}'`)
-  } catch (err) {
-    this.onError(err);
-  }
+  await copyFile(pathToFile, pathToNewDirectory);
+  return [`File '${pathToFile}' successfully copied to '${pathToNewDirectory}'`];
 }
 
 export default Command.createOptions(

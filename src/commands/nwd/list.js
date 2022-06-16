@@ -14,22 +14,18 @@ const adjustFileSize = (size, maxLen = 7) => {
 async function list() {
   const [ pathToDirectory ] = this.args;
 
-  try {
-    const files = await fsPromises.readdir(pathToDirectory, { withFileTypes: true });
-    const filesStats = await Promise.all(files.map(({ name }) => {
-      const pathToFile = path.join(pathToDirectory, name);
-      return fsPromises.stat(pathToFile);
-    }));
-    const filesOutputList = files.map((file, i) => {
-      const name = `${file.isFile() ? msg.file(file.name) : msg.dir(file.name)}`;
-      const sizeOutput = adjustFileSize(filesStats[i].size);
-      return `${msg.hl(sizeOutput)}  ${name}`;
-    });
-    const data = `${filesOutputList.join('\n')}`;
-    return this.onSuccess(undefined, data);
-  } catch (err) {
-    this.onError(err);
-  }
+  const files = await fsPromises.readdir(pathToDirectory, { withFileTypes: true });
+  const filesStats = await Promise.all(files.map(({ name }) => {
+    const pathToFile = path.join(pathToDirectory, name);
+    return fsPromises.stat(pathToFile);
+  }));
+  const filesOutputList = files.map((file, i) => {
+    const name = `${file.isFile() ? msg.file(file.name) : msg.dir(file.name)}`;
+    const sizeOutput = adjustFileSize(filesStats[i].size);
+    return `${msg.hl(sizeOutput)}  ${name}`;
+  });
+  const data = `${filesOutputList.join('\n')}`;
+  return [undefined, data];
 }
 
 export default Command.createOptions(

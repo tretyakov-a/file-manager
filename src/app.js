@@ -61,7 +61,7 @@ export default class App extends EventEmmiter {
     const [ command, ...args ] = parseCommand(line);
     try {
       const commandResult = await this._processCommand(command, args);
-      if (command !== '.exit') {
+      if (commandResult.showPromtOnSuccess) {
         this._writePromt(commandResult);
       }
     } catch (err) {

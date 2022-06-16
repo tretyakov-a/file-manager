@@ -6,7 +6,7 @@ import { toSnakeCase } from './utils.js';
 export default class Command {
   constructor(options, app) {
     this.options = options;
-
+    this.showPromtOnSuccess = true;
     this.app = app;
     this.requiredArgsNumber = {
       min: this.options.argsConfig.reduce((acc, arg) => acc + arg.required, 0),
@@ -14,16 +14,21 @@ export default class Command {
     };
   }
 
-  run(args = []) {
-    this.args = args;
-    this.checkArgs();
-
-    return this.options.handler.call(this);
+  async run(args = []) {
+    try {
+      this.args = args;
+      this.checkArgs();
+      return this.onSuccess(await this.options.handler.call(this));
+    } catch (error) {
+      this.onError(error);
+    } finally {
+      if (this.finally) this.finally.call(null);
+    }
   }
 
-  onSuccess(message, data) {
+  onSuccess([message, data] = []) {
     const outputMessage = message && msg.service(message);
-    return { message: outputMessage, data };
+    return { message: outputMessage, data, showPromtOnSuccess: this.showPromtOnSuccess };
   }
 
   onError(err) {
@@ -41,7 +46,7 @@ export default class Command {
     } = this;
     const isArgsNumberValid = length >= min && length <= max;
     if (!isArgsNumberValid) {
-      this.onError(new InvalidInputError(name, this.args));
+      throw new InvalidInputError(name, this.args);
     }
     this.args = argsConfig.map(this.processArg);
     return true;
@@ -61,7 +66,7 @@ export default class Command {
 
   processKey(value) {
     if (!this.options.keys.includes(value)) {
-      this.onError(new InvalidKeyError(value));
+      throw new InvalidKeyError(value);
     }
     return value;
   }

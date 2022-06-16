@@ -3,7 +3,8 @@ import App from '../../app.js';
 
 async function exit() {
   this.app.emit(App.EVENTS.CLOSE);
-  return this.onSuccess('Exiting...');
+  this.showPromtOnSuccess = false;
+  return ['Exiting...'];
 }
 
 export default Command.createOptions(

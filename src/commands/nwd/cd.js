@@ -5,17 +5,12 @@ import { isDirectory } from '../utils.js';
 
 async function cd() {
   const [ pathToDirectory ] = this.args;
-
-  try {
-    await fsPromises.access(pathToDirectory, fs.constants.F_OK);
-    if (!(await isDirectory(pathToDirectory))) {
-      throw new Error(`${pathToDirectory} is not directory`);
-    }
-    this.app.workingDirectory = pathToDirectory;
-    return this.onSuccess(`Working directory changed to ${pathToDirectory}`);
-  } catch (err) {
-    this.onError(err);
+  await fsPromises.access(pathToDirectory, fs.constants.F_OK);
+  if (!(await isDirectory(pathToDirectory))) {
+    throw new Error(`${pathToDirectory} is not directory`);
   }
+  this.app.workingDirectory = pathToDirectory;
+  return [`Working directory changed to ${pathToDirectory}`];
 }
 
 export default Command.createOptions(

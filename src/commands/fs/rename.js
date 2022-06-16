@@ -4,16 +4,11 @@ import Command from '../command.js';
 
 async function rename() {
   const [ pathToFile, newFileName ] = this.args;
-
   if (await isFileExists(newFileName)) {
-    this.onError(new Error(`File already exists '${newFileName}'`));
+    throw new Error(`File already exists '${newFileName}'`);
   }
-  try {
-    await fsPromises.rename(pathToFile, newFileName);
-    return this.onSuccess(`File ${pathToFile} successfully renamed to ${newFileName}`);
-  } catch (err) {
-    this.onError(err);
-  }
+  await fsPromises.rename(pathToFile, newFileName);
+  return [`File ${pathToFile} successfully renamed to ${newFileName}`];
 }
 
 export default Command.createOptions(

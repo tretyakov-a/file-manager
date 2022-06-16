@@ -7,20 +7,15 @@ async function hash() {
 
   const hash = crypto.createHash('sha256');
   hash.setEncoding('hex');
-
-  try {
-    const readStream = await createReadStream(pathToFile);
-    return await new Promise((resolve, reject) => {
-      readStream.on('error', (err) => reject(err));
-      readStream.on('end', () => {
-        hash.end();
-        resolve(this.onSuccess(`Hash of '${pathToFile}' is:`, hash.read()));
-      })
-      readStream.pipe(hash).on('error', (err) => reject(err))
+  const readStream = await createReadStream(pathToFile);
+  return await new Promise((resolve, reject) => {
+    readStream.on('error', (err) => reject(err));
+    readStream.on('end', () => {
+      hash.end();
+      resolve([`Hash of '${pathToFile}' is:`, hash.read()]);
     })
-  } catch (err) {
-    this.onError(err);
-  }
+    readStream.pipe(hash).on('error', (err) => reject(err))
+  })
 }
 
 export default Command.createOptions(

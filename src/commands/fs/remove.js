@@ -3,13 +3,8 @@ import Command from '../command.js';
 
 async function remove() {
   const [ pathToFile ] = this.args;
-
-  try {
-    await fsPromises.rm(pathToFile);
-    return this.onSuccess(`File ${pathToFile} successfully removed`);
-  } catch (err) {
-    this.onError(err);
-  }
+  await fsPromises.rm(pathToFile);
+  return [`File ${pathToFile} successfully removed`];
 }
 
 export default Command.createOptions(

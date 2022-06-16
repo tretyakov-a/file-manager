@@ -39,12 +39,8 @@ const keys = {
 
 async function os() {
   const [ key ] = this.args;
-  try {
-    const data = await keys[key].handler.call(null);
-    return this.onSuccess(undefined, data);
-  } catch (err) {
-    this.onError(err);
-  }
+  const data = await keys[key].handler.call(null);
+  return [undefined, data];
 }
 
 const printKeys = () => {

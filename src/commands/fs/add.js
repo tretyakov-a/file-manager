@@ -3,23 +3,11 @@ import { createWriteStream } from '../utils.js';
 
 async function add() {
   const [ pathToFile ] = this.args;
-  let writeStream;
-  try {
-    writeStream = await createWriteStream(pathToFile);  
-
-    // add some content for testing
-    // await new Promise((resolve, reject) => {
-    //   writeStream.write(`Hello world! Initial file location is ${pathToFile}\n`, (err) => {
-    //     if (err) reject(err);
-    //     resolve();
-    //   });
-    // })
-    return this.onSuccess(`File successfully added ${pathToFile}`);
-  } catch (err) {
-    this.onError(err);
-  } finally {
+  const writeStream = await createWriteStream(pathToFile);
+  this.finally = () => {
     if (writeStream) writeStream.close();
-  }
+  };
+  return [`File successfully added ${pathToFile}`];
 }
 
 export default Command.createOptions(

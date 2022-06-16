@@ -4,14 +4,9 @@ import Command from '../command.js';
 
 async function move() {
   const [ pathToFile, pathToNewDirectory ] = this.args;
-
-  try {
-    await copyFile(pathToFile, pathToNewDirectory);
-    await fsPromises.rm(pathToFile);
-    return this.onSuccess(`File '${pathToFile}' successfully moved to '${pathToNewDirectory}'`);
-  } catch (err) {
-    this.onError(err);
-  }
+  await copyFile(pathToFile, pathToNewDirectory);
+  await fsPromises.rm(pathToFile);
+  return [`File '${pathToFile}' successfully moved to '${pathToNewDirectory}'`];
 }
 
 export default Command.createOptions(

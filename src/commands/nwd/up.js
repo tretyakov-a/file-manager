@@ -5,13 +5,9 @@ import Command from '../command.js';
 
 async function up() {
   const { dir } = path.parse(this.app.workingDirectory);
-  try {
-    await fsPromises.access(dir, fs.constants.F_OK);
-    this.app.workingDirectory = dir;
-    return this.onSuccess(`Working directory changed to ${dir}`);
-  } catch (err) {
-    this.onError(err);
-  }
+  await fsPromises.access(dir, fs.constants.F_OK);
+  this.app.workingDirectory = dir;
+  return [`Working directory changed to ${dir}`];
 }
 
 export default Command.createOptions(
