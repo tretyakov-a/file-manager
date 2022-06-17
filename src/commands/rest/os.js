@@ -33,7 +33,7 @@ const keys = {
   ),
   '--architecture': createKey(
     'Get CPU architecture for which Node.js binary has compiled',
-    () => osNode.platform(),
+    () => osNode.arch(),
   ),
 };
 
