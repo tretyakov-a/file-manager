@@ -1,7 +1,7 @@
 
 class OperationFailedError extends Error {
   constructor(operation, reason) {
-    super(`Operation failed: ${operation}. Reason: ${reason.message}`);
+    super(`Operation failed: ${operation}. Reason: ${reason}`);
     this.operation = operation;
     this.reason = reason;
     this.name = this.constructor.name;
@@ -32,15 +32,31 @@ class InvalidKeyError extends Error {
   }
 }
 
+class FileExistsError extends Error {
+  constructor(pathToFile) {
+    super(`File already exists '${pathToFile}'`);
+    this.pathToFile = pathToFile;
+  }
+}
+
+class SourceIsDirectoryError extends Error {
+  constructor(source, isDirectory = true) {
+    super(`Source '${source}' is${!isDirectory ? ' not ' : ' '}a directory!`);
+    this.source = source;
+  }
+}
+
 const errors = {
   OperationFailedError,
   InvalidInputError,
   InvalidArgumentError,
   InvalidKeyError,
+  FileExistsError,
+  SourceIsDirectoryError
 };
 
 const isCustomError = (errorName) => {
-  return Object.keys(errors).find((name) => name === errorName);
+  return Object.keys(errors).includes(errorName);
 }
 
 export {
@@ -49,4 +65,6 @@ export {
   InvalidArgumentError,
   InvalidKeyError,
   isCustomError,
+  FileExistsError,
+  SourceIsDirectoryError,
 };

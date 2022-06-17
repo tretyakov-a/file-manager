@@ -2,6 +2,7 @@ import path from 'path';
 import { InvalidInputError, OperationFailedError, InvalidKeyError } from '../errors.js';
 import { msg } from '../appearance.js';
 import { toSnakeCase } from './utils.js';
+import { parseErrorMessage } from '../parse.js';
 
 export default class Command {
   constructor(options, app) {
@@ -35,7 +36,7 @@ export default class Command {
     if (err instanceof InvalidInputError || err instanceof InvalidKeyError) {
       this.app.output.write(`${this.getCommandInfo()}\n`);
     }
-    throw new OperationFailedError(this.options.name, err);
+    throw new OperationFailedError(this.options.name, parseErrorMessage(err.message));
   }
 
   checkArgs() {

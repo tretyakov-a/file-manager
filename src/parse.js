@@ -29,3 +29,12 @@ export function parseCommand(line) {
       .map(toEscapeSpaces),
   ];
 }
+
+export function parseErrorMessage(rawMsg) {
+  let msg = rawMsg.match(/^.*:[ ]+(.*)/);
+  if (!msg) {
+    return rawMsg;
+  }
+  msg = msg[1].trim();
+  return msg[0].toUpperCase() + msg.slice(1);
+}

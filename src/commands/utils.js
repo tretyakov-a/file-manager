@@ -1,6 +1,7 @@
 import fsPromises from 'fs/promises'
 import fs from 'fs';
 import { pipeline } from 'stream/promises';
+import { SourceIsDirectoryError } from '../errors.js';
 
 async function isFileExists(source) {
   try {
@@ -33,7 +34,7 @@ async function isDirectory(source) {
 
 async function createStream(source, flag = 'r') {
   if (await isDirectory()) {
-    throw new Error(`${source} is directory`);
+    throw new SourceIsDirectoryError(source);
   }
   return new Promise((resolve, reject) => {
     const stream = flag === 'r'
