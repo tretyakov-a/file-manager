@@ -56,11 +56,12 @@ export default class Command {
   processArg = (arg, i) => {
     const argValue = this.args[i];
     const prevArgValue = this.args[i - 1];
+    const T = Command.ARG_TYPE;
     switch(arg.type) {
-      case Command.ARGS.PATH: return this.processPath(argValue);
-      case Command.ARGS.DIR_PATH: return this.processDirPath(argValue, prevArgValue);
-      case Command.ARGS.NAME: return this.processName(argValue, prevArgValue);
-      case Command.ARGS.KEY: return this.processKey(argValue);
+      case T.PATH: return this.processPath(argValue);
+      case T.DIR_PATH: return this.processDirPath(argValue, prevArgValue);
+      case T.NAME: return this.processName(argValue, prevArgValue);
+      case T.KEY: return this.processKey(argValue);
       default: return argValue;
     }
   }
@@ -112,7 +113,7 @@ Command.createArg = function(name, type, required = true) {
   }
 }
 
-Command.ARGS = {
+Command.ARG_TYPE = {
   PATH: 'path',
   DIR_PATH: 'dirPath',
   KEY: 'key',

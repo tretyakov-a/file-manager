@@ -10,7 +10,7 @@ async function remove() {
 export default Command.createOptions(
   'rm',
   [
-    Command.createArg('pathToFile', Command.ARGS.PATH),
+    Command.createArg('pathToFile', Command.ARG_TYPE.PATH),
   ],
   'Delete file',
   remove

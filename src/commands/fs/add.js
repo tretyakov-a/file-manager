@@ -13,7 +13,7 @@ async function add() {
 export default Command.createOptions(
   'add',
   [
-    Command.createArg('pathToFile', Command.ARGS.PATH),
+    Command.createArg('pathToFile', Command.ARG_TYPE.PATH),
   ],
   'Create empty file in current working directory',
   add

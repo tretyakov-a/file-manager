@@ -17,7 +17,7 @@ async function cd() {
 export default Command.createOptions(
   'cd',
   [
-    Command.createArg('pathToDirectory', Command.ARGS.PATH),
+    Command.createArg('pathToDirectory', Command.ARG_TYPE.PATH),
   ],
   'Go to dedicated folder from current directory (path_to_directory can be relative or absolute)',
   cd

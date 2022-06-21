@@ -21,7 +21,7 @@ async function cat() {
 export default Command.createOptions(
   'cat',
   [
-    Command.createArg('pathToFile', Command.ARGS.PATH),
+    Command.createArg('pathToFile', Command.ARG_TYPE.PATH),
   ],
   'Read file and print it\'s content in console',
   cat

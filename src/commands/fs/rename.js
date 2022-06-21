@@ -15,8 +15,8 @@ async function rename() {
 export default Command.createOptions(
   'rn',
   [
-    Command.createArg('pathToFile', Command.ARGS.PATH),
-    Command.createArg('newFileName', Command.ARGS.NAME),
+    Command.createArg('pathToFile', Command.ARG_TYPE.PATH),
+    Command.createArg('newFileName', Command.ARG_TYPE.NAME),
   ],
   'Rename file',
   rename

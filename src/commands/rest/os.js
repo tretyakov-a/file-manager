@@ -52,7 +52,7 @@ const printKeys = () => {
 export default Command.createOptions(
   'os',
   [
-    Command.createArg('key', Command.ARGS.KEY),
+    Command.createArg('key', Command.ARG_TYPE.KEY),
   ],
   `Operating system info (prints following information in console)\n${printKeys()}`,
   os,

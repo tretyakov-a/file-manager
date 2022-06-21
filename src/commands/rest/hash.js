@@ -21,7 +21,7 @@ async function hash() {
 export default Command.createOptions(
   'hash',
   [
-    Command.createArg('pathToFile', Command.ARGS.PATH),
+    Command.createArg('pathToFile', Command.ARG_TYPE.PATH),
   ],
   'Calculate hash for file and print it into console',
   hash

@@ -10,8 +10,8 @@ async function copy() {
 export default Command.createOptions(
   'cp',
   [
-    Command.createArg('pathToFile', Command.ARGS.PATH),
-    Command.createArg('pathToNewDirectory', Command.ARGS.DIR_PATH),
+    Command.createArg('pathToFile', Command.ARG_TYPE.PATH),
+    Command.createArg('pathToNewDirectory', Command.ARG_TYPE.DIR_PATH),
   ],
   'Copy file',
   copy

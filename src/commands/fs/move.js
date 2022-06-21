@@ -12,8 +12,8 @@ async function move() {
 export default Command.createOptions(
   'mv',
   [
-    Command.createArg('pathToFile', Command.ARGS.PATH),
-    Command.createArg('pathToNewDirectory', Command.ARGS.DIR_PATH),
+    Command.createArg('pathToFile', Command.ARG_TYPE.PATH),
+    Command.createArg('pathToNewDirectory', Command.ARG_TYPE.DIR_PATH),
   ],
   'Move file (same as copy but initial file is deleted)',
   move

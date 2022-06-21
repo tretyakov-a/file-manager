@@ -14,8 +14,8 @@ async function compress() {
 export default Command.createOptions(
   'compress',
   [
-    Command.createArg('pathToFile', Command.ARGS.PATH),
-    Command.createArg('pathToNewDestination', Command.ARGS.PATH),
+    Command.createArg('pathToFile', Command.ARG_TYPE.PATH),
+    Command.createArg('pathToNewDestination', Command.ARG_TYPE.PATH),
   ],
   'Compress file (using Brotli algorytm)',
   compress

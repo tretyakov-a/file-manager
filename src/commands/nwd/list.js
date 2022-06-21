@@ -31,7 +31,7 @@ async function list() {
 export default Command.createOptions(
   'ls',
   [
-    Command.createArg('pathToDirectory', Command.ARGS.PATH, false),
+    Command.createArg('pathToDirectory', Command.ARG_TYPE.PATH, false),
   ],
   'List all files and folder in current directory and print it to console',
   list

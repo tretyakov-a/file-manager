@@ -14,8 +14,8 @@ async function decompress() {
 export default Command.createOptions(
   'decompress',
   [
-    Command.createArg('pathToFile', Command.ARGS.PATH),
-    Command.createArg('pathToNewDestination', Command.ARGS.PATH),
+    Command.createArg('pathToFile', Command.ARG_TYPE.PATH),
+    Command.createArg('pathToNewDestination', Command.ARG_TYPE.PATH),
   ],
   'Decompress file (using Brotli algorytm)',
   decompress
