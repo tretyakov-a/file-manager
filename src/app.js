@@ -112,6 +112,6 @@ App.EVENTS = {
 App.MESSAGES = {
   LINE_START: '> ',
   WELCOME: (username) => msg.greet(`*** Welcome to the File Manager, ${username}! Enter 'help' to list available commands. ***\n`),
-  FAREWELL: (username = 'unknown') => msg.greet(`\nThank you for using File Manager, ${username}!\n`),
+  FAREWELL: (username = 'unknown') => msg.greet(`\nThank you for using File Manager, ${username}, goodbye!\n`),
   DIRECTORY: (dir) => `You are currently in ${msg.dir(dir)}`,
 };

@@ -17,6 +17,6 @@ export default Command.createOptions(
     Command.createArg('pathToFile', Command.ARG_TYPE.PATH),
     Command.createArg('pathToNewDestination', Command.ARG_TYPE.PATH),
   ],
-  'Decompress file (using Brotli algorytm)',
+  'Decompress file (using Brotli algorithm)',
   decompress
 );

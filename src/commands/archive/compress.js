@@ -17,7 +17,7 @@ export default Command.createOptions(
     Command.createArg('pathToFile', Command.ARG_TYPE.PATH),
     Command.createArg('pathToNewDestination', Command.ARG_TYPE.PATH),
   ],
-  'Compress file (using Brotli algorytm)',
+  'Compress file (using Brotli algorithm)',
   compress
 );
 
