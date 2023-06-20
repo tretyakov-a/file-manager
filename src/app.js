@@ -14,14 +14,15 @@ export default class App extends EventEmmiter {
     this._initEvents();
     this._initReadline();
     this._initCommands();
+    this._initUserInfo(args);
+  }
 
-    let argValues = null;
-    let userInfo = null;
+  _initUserInfo = (args) => {
     try {
-      argValues = parseAppArguments(args, {
+      const argValues = parseAppArguments(args, {
         userName: '--username'
       });
-      userInfo = os.userInfo();
+      const userInfo = os.userInfo();
       this.userName = argValues.userName || userInfo.username;
       this.workingDirectory = userInfo.homedir;
   
