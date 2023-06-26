@@ -11,21 +11,32 @@ const adjustFileSize = (size, maxLen = 7) => {
   return ' '.repeat(maxLen - output.length) + output;
 };
 
+const toOutputString = (filesStats) => (file) => {
+  const isDir = file.isDirectory();
+  const name = `${isDir ? msg.dir(file.name) : msg.file(file.name)}`;
+  const sizeOutput = adjustFileSize(filesStats.size);
+  const output = [
+    msg.hl(sizeOutput), name
+  ]
+  return output.join(' ');
+}
+
 async function list() {
   const [ pathToDirectory ] = this.args;
 
   const files = await fsPromises.readdir(pathToDirectory, { withFileTypes: true });
+
   const filesStats = await Promise.all(files.map(({ name }) => {
     const pathToFile = path.join(pathToDirectory, name);
     return fsPromises.stat(pathToFile);
   }));
-  const filesOutputList = files.map((file, i) => {
-    const name = `${file.isFile() ? msg.file(file.name) : msg.dir(file.name)}`;
-    const sizeOutput = adjustFileSize(filesStats[i].size);
-    return `${msg.hl(sizeOutput)}  ${name}`;
-  });
-  const data = `${filesOutputList.join('\n')}`;
-  return [undefined, data];
+
+
+  const allOutput = files
+    .map((file, i) => ([file.isDirectory(), toOutputString(filesStats[i])(file)]))
+    .sort(([isDirA], [isDirB]) => isDirB - isDirA);
+
+  return [undefined, allOutput.map(([, output]) => output).join('\n')];
 }
 
 export default Command.createOptions(
