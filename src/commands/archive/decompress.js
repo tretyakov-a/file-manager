@@ -5,7 +5,7 @@ async function decompress() {
   const [ pathToFile, pathToNewDestination ] = this.args;
   try {
     await archive(pathToFile, pathToNewDestination, this.options.name);
-    return this.onSuccess(`File ${pathToFile} successfully decompressed to ${pathToNewDestination}`);
+    return [`File ${pathToFile} successfully decompressed to ${pathToNewDestination}`];
   } catch (err) {
     this.onError(err);
   }
