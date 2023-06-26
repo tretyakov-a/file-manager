@@ -19,7 +19,7 @@ const toNoQuotes = (v) => v.replaceAll(/["']/g, '');
 const toEscapeSpaces = (v) => v.replaceAll(/ /g, '\ ');
 
 export function parseCommand(line) {
-  const [_, command = '', argsStr = ''] = line.trim().match(/^([\.a-z]+)([ ]+.*)*$/) || [];
+  const [_, command = '', argsStr = ''] = line.trim().match(/^([\.\w]+)([ ]+.*)*$/) || [];
   const args = argsStr.match(/[ ]*(["'])([^'"]+)\1|[^ ]+/g) || [];
   return [
     command,
