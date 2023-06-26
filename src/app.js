@@ -79,7 +79,7 @@ export default class App extends EventEmmiter {
   }
   
   onError = (err) => {
-    const isErrorCustom = isCustomError(err.name);
+    const isErrorCustom = isCustomError(err);
     if (!isErrorCustom || err instanceof InvalidArgumentError) {
       console.error(msg.error(err.message));
       return this.emit(App.EVENTS.CLOSE);

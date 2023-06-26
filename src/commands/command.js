@@ -1,5 +1,11 @@
 import path from 'path';
-import { InvalidInputError, OperationFailedError, InvalidKeyError } from '../errors.js';
+import {
+  InvalidInputError,
+  OperationFailedError,
+  InvalidKeyError,
+  isCustomError,
+  InvalidNumberOfArguments
+} from '../errors.js';
 import { msg } from '../appearance.js';
 import { toSnakeCase } from './utils.js';
 import { parseErrorMessage } from '../parse.js';
@@ -33,10 +39,12 @@ export default class Command {
   }
 
   onError(err) {
-    if (err instanceof InvalidInputError || err instanceof InvalidKeyError) {
+    if (err instanceof InvalidInputError
+      || err instanceof InvalidKeyError
+      || err instanceof InvalidNumberOfArguments) {
       this.app.output.write(`${this.getCommandInfo()}\n`);
     }
-    throw new OperationFailedError(this.options.name, parseErrorMessage(err.message));
+    throw new OperationFailedError(this.options.name, isCustomError(err) ? err.message : parseErrorMessage(err.message));
   }
 
   checkArgs() {
@@ -47,7 +55,7 @@ export default class Command {
     } = this;
     const isArgsNumberValid = length >= min && length <= max;
     if (!isArgsNumberValid) {
-      throw new InvalidInputError(name, this.args);
+      throw new InvalidNumberOfArguments(name);
     }
     this.args = argsConfig.map(this.processArg);
     return true;
